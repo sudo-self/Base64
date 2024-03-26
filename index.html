@@ -1,19 +1,175 @@
-<title>Base64</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base64 Encoder</title>
+  <style>
+            
+      body {
+        background-color: #0d2f5a;
+        background-image: url("data:image/ ");
+        background-repeat: no-repeat;
+        background-size: 100%;
+        background-attachment: fixed;
+        font-family: Arial, sans-serif;
+      }
 
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .button-36 {
+      align-items: center;
+      appearance: none;
+      background-color: #FCFCFD;
+      border-radius: 4px;
+      border-width: 0;
+      box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+      box-sizing: border-box;
+      color: #36395A;
+      cursor: pointer;
+      display: inline-flex;
+      font-family: "JetBrains Mono",monospace;
+      height: 48px;
+      justify-content: center;
+      line-height: 1;
+      list-style: none;
+      overflow: hidden;
+      padding-left: 16px;
+      padding-right: 16px;
+      position: relative;
+      text-align: left;
+      text-decoration: none;
+      transition: box-shadow .15s,transform .15s;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      white-space: nowrap;
+      will-change: box-shadow,transform;
+      font-size: 18px;
+    }
+
+    .button-36:focus {
+      box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+    }
+
+    .button-36:hover {
+      box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+      transform: translateY(-2px);
+    }
+
+    .button-36:active {
+      box-shadow: #D6D6E7 0 3px 7px inset;
+      transform: translateY(2px);
+    }
+  </style>
+</head>
 <body>
   <div class="button-row">
     <label for="fileInput" class="button-36">
       <img id="thumbnail" src="https://api.iconify.design/material-symbols:add-photo-alternate-outline.svg?color=%23000000" alt="Thumbnail" style="width: 50px; height: 50px;">
-   
       <span></span>
       <input type="file" id="fileInput" accept="image/*" onchange="displayImage(this)" style="display: none;">
-    </label><!------BUTTONS------>
+    </label>
     <button onclick="encodeImage()" class="button-36">Base64</button>
     <button onclick="downloadImage()" class="button-36">Text</button>
     <button onclick="downloadCSS()" class="button-36">CSS</button>
-    <button onclick="copyToClipboard()" class="button-36">ctrl+ c</button>
+    <button onclick="copyToClipboard()" class="button-36">Copy</button>
   </div>
 
   <div id="encodedImage"></div>
 
-  <textarea id="encodedCode" rows="5" cols="50" readonly style="display:none"></textarea><!-----Hidden---->
+  <textarea id="encodedCode" rows="5" cols="50" readonly style="display: none;"></textarea>
+
+  <script>
+    async function encodeImage() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Please select an image file.');
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        const base64EncodedImage = event.target.result;
+        document.getElementById('encodedImage').innerHTML = `<img src="${base64EncodedImage}" alt="Encoded Image">`;
+        document.getElementById('encodedCode').value = base64EncodedImage;
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function copyToClipboard() {
+      const textarea = document.getElementById('encodedCode');
+      textarea.select();
+      document.execCommand('copy');
+      alert('Code copied to clipboard!');
+    }
+
+    function downloadImage() {
+      const base64EncodedImage = document.getElementById('encodedCode').value;
+      const blob = new Blob([base64EncodedImage], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'sudo-self.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      alert('Text file downloaded!');
+    }
+
+    function downloadCSS() {
+      const base64EncodedImage = document.getElementById('encodedCode').value;
+      const cssContent = `body {
+        background-image: url("${base64EncodedImage}");
+        background-repeat: no-repeat;
+        background-size: 80%;
+        background-attachment: fixed;
+      }`;
+      const blob = new Blob([cssContent], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'sudo-self.css';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      alert('CSS file downloaded!');
+    }
+
+    function displayImage(input) {
+      var file = input.files[0];
+      var imageType = /image.*/;
+
+      if (file.type.match(imageType)) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          var img = new Image();
+          img.src = reader.result;
+
+          img.onload = function() {
+            var width = this.width;
+            var height = this.height;
+            document.getElementById('thumbnail').src = this.src;
+            document.getElementById('thumbnail').style.display = 'inline';
+            document.getElementById('resolution').innerText = width + " x " + height;
+          };
+        };
+
+        reader.readAsDataURL(file);
+      } else {
+        alert("File format not supported!");
+      }
+    }
+  </script>
+  <h5 id="resolution"></h5>
+</body>
+</html>
+
