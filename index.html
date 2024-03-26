@@ -1,0 +1,19 @@
+<title>Base64</title>
+
+<body>
+  <div class="button-row">
+    <label for="fileInput" class="button-36">
+      <img id="thumbnail" src="https://api.iconify.design/material-symbols:add-photo-alternate-outline.svg?color=%23000000" alt="Thumbnail" style="width: 50px; height: 50px;">
+   
+      <span></span>
+      <input type="file" id="fileInput" accept="image/*" onchange="displayImage(this)" style="display: none;">
+    </label><!------BUTTONS------>
+    <button onclick="encodeImage()" class="button-36">Base64</button>
+    <button onclick="downloadImage()" class="button-36">Text</button>
+    <button onclick="downloadCSS()" class="button-36">CSS</button>
+    <button onclick="copyToClipboard()" class="button-36">ctrl+ c</button>
+  </div>
+
+  <div id="encodedImage"></div>
+
+  <textarea id="encodedCode" rows="5" cols="50" readonly style="display:none"></textarea><!-----Hidden---->
